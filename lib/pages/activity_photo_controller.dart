@@ -247,7 +247,6 @@ class PhotoController extends GetxController {
             ),
           ],
         );
-
       },
     );
 
@@ -332,7 +331,6 @@ class PhotoController extends GetxController {
             ),
           ],
         );
-
       },
     );
 

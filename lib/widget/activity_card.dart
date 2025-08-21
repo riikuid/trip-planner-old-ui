@@ -8,6 +8,7 @@ import 'package:iterasi1/provider/itinerary_provider.dart';
 import 'package:iterasi1/resource/custom_colors.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ActivityCard extends StatelessWidget {
   final Activity data;
@@ -58,6 +59,23 @@ class ActivityCard extends StatelessWidget {
             ],
           ),
         );
+      }
+    }
+
+    Future<void> openGoogleMaps(String placeName) async {
+      // Encode nama tempat untuk URL
+      String query = Uri.encodeComponent(placeName);
+      String googleMapsUrl =
+          "https://www.google.com/maps/search/?api=1&query=$query";
+
+      final Uri url = Uri.parse(googleMapsUrl);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(
+          url,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        throw 'Could not launch $url';
       }
     }
 
@@ -114,14 +132,14 @@ class ActivityCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
                                 data.activityName,
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(
@@ -132,102 +150,108 @@ class ActivityCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            // Stack(
-                            //   children: [
-                            //     Padding(
-                            //       padding: const EdgeInsets.all(12.0),
-                            //       child: Align(
-                            //         alignment: Alignment.topRight,
-                            //         child: InkWell(
-                            //           onTap: () {
-                            //             print('activity:${data.startDateTime}');
-                            //             print('activity:${data.startActivityTime}');
-                            //             requestGalleryPermission(
-                            //                 data); // Kirim activity sebagai argument
-                            //           },
-                            //           child: Transform.scale(
-                            //             scale: 1.8, // ukuran gambar
-                            //             child: const Image(
-                            //               width: 30,
-                            //               height: 30,
-                            //               color: CustomColor.surface,
-                            //               image: AssetImage(
-                            //                 'assets/images/gallery-favorite.png',
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(
-                                  IconData(0xe055, fontFamily: 'MaterialIcons'),
-                                  color: Colors.white,
-                                  size: 15,
-                                ),
-                                const SizedBox(
-                                  width: 9,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    data.lokasi,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      fontFamily: 'poppins_bold',
-                                      fontSize: 15,
-                                      color: Colors.white,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        IconData(0xe055,
+                                            fontFamily: 'MaterialIcons'),
+                                        color: Colors.white,
+                                        size: 15,
+                                      ),
+                                      const SizedBox(
+                                        width: 9,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          data.lokasi,
+                                          textAlign: TextAlign.left,
+                                          style: const TextStyle(
+                                            fontFamily: 'poppins_bold',
+                                            fontSize: 15,
+                                            color: Colors.white,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.access_time_outlined,
-                                  color: Colors.white,
-                                  size: 15,
-                                ),
-                                const SizedBox(
-                                  width: 9,
-                                ),
-                                Text(
-                                  "${data.startActivityTime} - ${data.endActivityTime}",
-                                  style: const TextStyle(
-                                    fontFamily: 'poppins_bold',
-                                    fontSize: 15,
-                                    color: Colors.white,
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.access_time_outlined,
+                                        color: Colors.white,
+                                        size: 15,
+                                      ),
+                                      const SizedBox(
+                                        width: 9,
+                                      ),
+                                      Text(
+                                        "${data.startActivityTime} - ${data.endActivityTime}",
+                                        style: const TextStyle(
+                                          fontFamily: 'poppins_bold',
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        Text(
-                          data.keterangan,
-                          style: const TextStyle(
-                            fontFamily: 'poppins_regular',
-                            fontSize: 12,
-                            color: Colors.white,
+                                ],
+                              ),
+                              Text(
+                                data.keterangan,
+                                style: const TextStyle(
+                                  fontFamily: 'poppins_regular',
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ],
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                        ),
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: InkWell(
+                                onTap: () {
+                                  print('activity:${data.startDateTime}');
+                                  print('activity:${data.startActivityTime}');
+                                  requestGalleryPermission(
+                                      data); // Kirim activity sebagai argument
+                                },
+                                child: Icon(
+                                  Icons.photo_library_rounded,
+                                  color: CustomColor.surface,
+                                  size: 30,
+                                ),
+                              ),
+                            ),
+                            if (!data.isCustomLocation)
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    openGoogleMaps(data.lokasi);
+                                  },
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: CustomColor.surface,
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),
